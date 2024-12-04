@@ -1,11 +1,27 @@
 """Solution for day 4 2024 in Python."""
 
 from collections import defaultdict
+from enum import IntEnum
 
 DAY_NO = __file__.rsplit("_", maxsplit=1)[-1].rstrip(".py")
 
 with open(f"data/input_{DAY_NO}.txt", "r") as f:
     data = [s.strip() for s in f]
+
+
+class Dir(IntEnum):
+    """Directions to move in the matrix."""
+
+    # for row direction
+    UP = -1
+    DOWN = 1
+
+    # for column direction
+    LEFT = -1
+    RIGHT = 1
+
+    # no direction
+    ZERO = 0
 
 
 # Part 1 Solution
@@ -17,52 +33,65 @@ class PuzzleFinder:
         self.target = target
         self.target_len = len(self.target)
 
-    def _validate_up_limit(self, r):
-        return r - self.target_len + 1 < 0
+    def _validate_boundaries(
+        self,
+        r: int,
+        c: int,
+        row_dir: int,
+        col_dir: int,
+    ) -> bool:
 
-    def _validate_down_limit(self, r):
-        return r + self.target_len > self.row_len
+        r_move = r + row_dir * (self.target_len - 1)
+        c_move = c + col_dir * (self.target_len - 1)
 
-    def _validate_right_limit(self, c):
-        return c + self.target_len > self.col_len
+        if (0 <= r_move <= self.row_len - 1) and (0 <= c_move <= self.col_len - 1):
+            return True
 
-    def _validate_left_limit(self, c):
-        return c - self.target_len + 1 < 0
+    def _search_direction(
+        self,
+        r: int,
+        c: int,
+        row_dir: int,
+        col_dir: int,
+    ) -> int:
+        """Search a specific direction in the n*n matrix.
+
+        Args:
+            r (int): Current row index.
+            c (int): Current column index.
+            row_dir (int): Direction to move. 1 is right, -1 is left, 0 is same index.
+            col_dir (int): Direction to move. 1 is down, -1 is up, 0 is same index.
+
+        Returns:
+            int: 1 if all words in target is accounted for.
+        """
+        if not self._validate_boundaries(r, c, row_dir, col_dir):
+            return 0
+
+        chain = 1
+        for i in range(1, self.target_len):
+            next_row = r + (row_dir * i)
+            next_col = c + (col_dir * i)
+            if (
+                chain < self.target_len
+                and self.puzzle[next_row][next_col] == self.target[i]
+            ):
+                chain += 1
+            else:
+                break
+
+        return self._return_valid_count(chain)
 
     def _return_valid_count(self, chain):
         return 1 if chain == self.target_len else 0
 
-    def search_right(self, r: int, c: int) -> bool:
+    def search_right(self, r: int, c: int) -> int:
         """Search right for XMAS."""
-
-        if self._validate_right_limit(c):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_col = c + i
-            if chain < self.target_len and self.puzzle[r][next_col] == self.target[i]:
-                chain += 1
-            else:
-                break
-
-        return self._return_valid_count(chain)
+        return self._search_direction(r, c, Dir.ZERO, Dir.RIGHT)
 
     def search_left(self, r: int, c: int) -> bool:
         """Search left for SMA'X'."""
-
-        if self._validate_left_limit(c):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_col = c - i
-            if chain < self.target_len and self.puzzle[r][next_col] == self.target[i]:
-                chain += 1
-            else:
-                break
-
-        return self._return_valid_count(chain)
+        return self._search_direction(r, c, Dir.ZERO, Dir.LEFT)
 
     def search_down(self, r: int, c: int) -> bool:
         """Search down for
@@ -71,19 +100,7 @@ class PuzzleFinder:
         A
         S.
         """
-
-        if self._validate_down_limit(r):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_row = r + i
-            if chain < self.target_len and self.puzzle[next_row][c] == self.target[i]:
-                chain += 1
-            else:
-                break
-
-        return self._return_valid_count(chain)
+        return self._search_direction(r, c, Dir.DOWN, Dir.ZERO)
 
     def search_up(self, r: int, c: int) -> bool:
         """Search down for
@@ -92,19 +109,7 @@ class PuzzleFinder:
         M
         X.
         """
-
-        if self._validate_up_limit(r):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_row = r - i
-            if chain < self.target_len and self.puzzle[next_row][c] == self.target[i]:
-                chain += 1
-            else:
-                break
-
-        return self._return_valid_count(chain)
+        return self._search_direction(r, c, Dir.UP, Dir.ZERO)
 
     def search_diagonal_right_down(self, r: int, c: int) -> bool:
         """Search diagonal down for
@@ -113,23 +118,7 @@ class PuzzleFinder:
         ..A.
         ....S
         """
-
-        if self._validate_right_limit(c) or self._validate_down_limit(r):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_row = r + i
-            next_col = c + i
-            if (
-                chain < self.target_len
-                and self.puzzle[next_row][next_col] == self.target[i]
-            ):
-                chain += 1
-            else:
-                break
-
-        return self._return_valid_count(chain)
+        return self._search_direction(r, c, Dir.DOWN, Dir.RIGHT)
 
     def search_diagonal_left_down(self, r: int, c: int) -> bool:
         """Search diagonal down for
@@ -138,23 +127,7 @@ class PuzzleFinder:
         .A..
         S...
         """
-
-        if self._validate_left_limit(c) or self._validate_down_limit(r):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_row = r + i
-            next_col = c - i
-            if (
-                chain < self.target_len
-                and self.puzzle[next_row][next_col] == self.target[i]
-            ):
-                chain += 1
-            else:
-                break
-
-        return self._return_valid_count(chain)
+        return self._search_direction(r, c, Dir.DOWN, Dir.LEFT)
 
     def search_diagonal_right_up(self, r: int, c: int) -> bool:
         """Search diagonal up for
@@ -163,23 +136,7 @@ class PuzzleFinder:
         .M..
         X...
         """
-
-        if self._validate_right_limit(c) or self._validate_up_limit(r):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_row = r - i
-            next_col = c + i
-            if (
-                chain < self.target_len
-                and self.puzzle[next_row][next_col] == self.target[i]
-            ):
-                chain += 1
-            else:
-                break
-
-        return self._return_valid_count(chain)
+        return self._search_direction(r, c, Dir.UP, Dir.RIGHT)
 
     def search_diagonal_left_up(self, r: int, c: int) -> bool:
         """Search diagonal left up for
@@ -188,23 +145,7 @@ class PuzzleFinder:
         ..M.
         ...X
         """
-
-        if self._validate_left_limit(c) or self._validate_up_limit(r):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_row = r - i
-            next_col = c - i
-            if (
-                chain < self.target_len
-                and self.puzzle[next_row][next_col] == self.target[i]
-            ):
-                chain += 1
-            else:
-                break
-
-        return self._return_valid_count(chain)
+        return self._search_direction(r, c, Dir.UP, Dir.LEFT)
 
 
 class XMasPuzzleFinder(PuzzleFinder):
@@ -219,125 +160,81 @@ class XMasPuzzleFinder(PuzzleFinder):
         if self.target_len % 2 == 0:
             raise ValueError(f"{__class__} expects odd number length.")
 
-    def search_diagonal_right_down(self, r: int, c: int) -> bool:
+    def _search_direction_with_memory(
+        self,
+        r: int,
+        c: int,
+        row_dir: int,
+        col_dir: int,
+    ) -> "XMasPuzzleFinder":
+        """Search a specific direction in the n*n matrix, remembers the position of middle index.
+
+        Args:
+            r (int): Current row index.
+            c (int): Current column index.
+            row_dir (int): Direction to move. 1 is right, -1 is left, 0 is same index.
+            col_dir (int): Direction to move. 1 is down, -1 is up, 0 is same index.
+
+        Returns:
+            int: 1 if all words in target is accounted for.
+        """
+        if not self._validate_boundaries(r, c, row_dir, col_dir):
+            return 0
+
+        chain = 1
+        for i in range(1, self.target_len):
+            next_row = r + (row_dir * i)
+            next_col = c + (col_dir * i)
+            if (
+                chain < self.target_len
+                and self.puzzle[next_row][next_col] == self.target[i]
+            ):
+                chain += 1
+            else:
+                break
+
+        if self._return_valid_count(chain):
+            mid_row = r + (row_dir * self.mid_idx)
+            mid_col = c + (col_dir * self.mid_idx)
+            self.mid_idx_coord[(mid_row, mid_col)] += 1
+
+        return self
+
+    def search_diagonal_right_down(self, r: int, c: int) -> "XMasPuzzleFinder":
         """
         Search diagonal right down for with memory of the middle coordinate.
         M..
         .A.
         ..S
         """
+        return self._search_direction_with_memory(r, c, Dir.DOWN, Dir.RIGHT)
 
-        if self._validate_right_limit(c) or self._validate_down_limit(r):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_row = r + i
-            next_col = c + i
-            if (
-                chain < self.target_len
-                and self.puzzle[next_row][next_col] == self.target[i]
-            ):
-                chain += 1
-            else:
-                break
-
-        if self._return_valid_count(chain):
-            mid_row = r + self.mid_idx
-            mid_col = c + self.mid_idx
-            self.mid_idx_coord[(mid_row, mid_col)] += 1
-
-        return
-
-    def search_diagonal_left_down(self, r: int, c: int) -> bool:
+    def search_diagonal_left_down(self, r: int, c: int) -> "XMasPuzzleFinder":
         """
         Search diagonal left down for with memory of the middle coordinate.
         ..M
         .A.
         S..
         """
+        return self._search_direction_with_memory(r, c, Dir.DOWN, Dir.LEFT)
 
-        if self._validate_left_limit(c) or self._validate_down_limit(r):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_row = r + i
-            next_col = c - i
-            if (
-                chain < self.target_len
-                and self.puzzle[next_row][next_col] == self.target[i]
-            ):
-                chain += 1
-            else:
-                break
-
-        if self._return_valid_count(chain):
-            mid_row = r + self.mid_idx
-            mid_col = c - self.mid_idx
-            self.mid_idx_coord[(mid_row, mid_col)] += 1
-
-        return
-
-    def search_diagonal_right_up(self, r: int, c: int) -> bool:
+    def search_diagonal_right_up(self, r: int, c: int) -> "XMasPuzzleFinder":
         """
         Search diagonal right up for with memory of the middle coordinate.
         ..S
         .A.
         M..
         """
+        return self._search_direction_with_memory(r, c, Dir.UP, Dir.RIGHT)
 
-        if self._validate_right_limit(c) or self._validate_up_limit(r):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_row = r - i
-            next_col = c + i
-            if (
-                chain < self.target_len
-                and self.puzzle[next_row][next_col] == self.target[i]
-            ):
-                chain += 1
-            else:
-                break
-
-        if self._return_valid_count(chain):
-            mid_row = r - self.mid_idx
-            mid_col = c + self.mid_idx
-            self.mid_idx_coord[(mid_row, mid_col)] += 1
-
-        return
-
-    def search_diagonal_left_up(self, r: int, c: int) -> bool:
+    def search_diagonal_left_up(self, r: int, c: int) -> "XMasPuzzleFinder":
         """
         Search diagonal left up for with memory of the middle coordinate.
         S..
         .A.
         ..M
         """
-
-        if self._validate_left_limit(c) or self._validate_up_limit(r):
-            return 0
-
-        chain = 1
-        for i in range(1, self.target_len):
-            next_row = r - i
-            next_col = c - i
-            if (
-                chain < self.target_len
-                and self.puzzle[next_row][next_col] == self.target[i]
-            ):
-                chain += 1
-            else:
-                break
-
-        if self._return_valid_count(chain):
-            mid_row = r - self.mid_idx
-            mid_col = c - self.mid_idx
-            self.mid_idx_coord[(mid_row, mid_col)] += 1
-
-        return
+        return self._search_direction_with_memory(r, c, Dir.UP, Dir.LEFT)
 
 
 if __name__ == "__main__":
