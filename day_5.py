@@ -1,7 +1,6 @@
 """Solution for day 5 2024 in Python."""
 
 from collections import defaultdict
-from enum import IntEnum
 
 DAY_NO = __file__.rsplit("_", maxsplit=1)[-1].rstrip(".py")
 
@@ -34,28 +33,36 @@ def check_pages_violate_page_order(
     return result_hash
 
 
-page_order, pages_to_update = parse_page_order(data)
+if __name__ == "__main__":
 
-page_order_hash = defaultdict(list)
-pages_to_update_arr = [s.split(",") for s in pages_to_update if s]
+    page_order, pages_to_update = parse_page_order(data)
+    page_order_hash = defaultdict(list)
+    pages_to_update_arr = [s.split(",") for s in pages_to_update if s]
 
-for p in page_order:
-    left, right = p.split("|")
-    page_order_hash[left].append(right)
+    for p in page_order:
+        left, right = p.split("|")
+        page_order_hash[left].append(right)
 
+    middle_pages = []
+    incorrect_arr = []
+    for p_arr in pages_to_update_arr:
 
-middle_pages = []
-incorrect_arr = []
-rejected = False
-for p_arr in pages_to_update_arr:
+        result_hash = check_pages_violate_page_order(p_arr, page_order_hash)
 
-    result_hash = check_pages_violate_page_order(p_arr, page_order_hash)
-    print(result_hash)
-    print(any(result_hash.values()))
+        if not any(result_hash.values()):
+            # Part 1
+            middle_pages.append(int(p_arr[len(p_arr) // 2]))
+        else:
+            # Part 2
+            stack = []
+            for p in p_arr:
 
-    if not any(result_hash.values()):
-        middle_pages.append(int(p_arr[len(p_arr) // 2]))
+                if stack and result_hash[p]:
+                    loc = -len(result_hash[p])
+                    stack.insert(loc, p)
+                else:
+                    stack.append(p)
+            incorrect_arr.append(int(stack[len(stack) // 2]))
 
-print("Solution for Part 1", sum(middle_pages))
-
-# print(incorrect_arr)
+    print("Solution for Part 1", sum(middle_pages))
+    print("Solution for Part 2", sum(incorrect_arr))
