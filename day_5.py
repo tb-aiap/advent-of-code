@@ -2,18 +2,7 @@
 
 from collections import defaultdict
 
-
-def get_data(test_data: bool = False):
-    """Function to get data."""
-    day_no = __file__.split("_", maxsplit=1)[-1].rstrip(".py")
-    test_ = "test_" if test_data else ""
-
-    input_path = f"data/{test_}input_{day_no}.txt"
-
-    with open(input_path, "r") as f:
-        data = [s.strip() for s in f]
-
-    return data
+from utils import get_data
 
 
 def parse_page_order(data: list[str]):
@@ -80,7 +69,7 @@ def main(data):
 
 if __name__ == "__main__":
 
-    data = get_data()
+    data = get_data(day_no=5)
     part_1, part_2 = main(data)
 
     print("Solution for Part 1", part_1)

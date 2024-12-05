@@ -7,7 +7,7 @@ from day_5 import get_data, main
 
 @pytest.fixture()
 def data():
-    return get_data(test_data=True)
+    return get_data(5, test_data=True)
 
 
 def test_main(data):
