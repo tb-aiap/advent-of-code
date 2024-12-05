@@ -2,10 +2,18 @@
 
 from collections import defaultdict
 
-DAY_NO = __file__.rsplit("_", maxsplit=1)[-1].rstrip(".py")
 
-with open(f"data/input_{DAY_NO}.txt", "r") as f:
-    data = [s.strip() for s in f]
+def get_data(test_data: bool = False):
+    """Function to get data."""
+    day_no = __file__.split("_", maxsplit=1)[-1].rstrip(".py")
+    test_ = "test_" if test_data else ""
+
+    input_path = f"data/{test_}input_{day_no}.txt"
+
+    with open(input_path, "r") as f:
+        data = [s.strip() for s in f]
+
+    return data
 
 
 def parse_page_order(data: list[str]):
@@ -25,7 +33,7 @@ def check_pages_violate_page_order(
     for idx, page in enumerate(page_arr):
 
         page_list = page_order_hash[page]
-        pages_before = p_arr[:idx]
+        pages_before = page_arr[:idx]
         result = [pb for pb in pages_before if pb in page_list]
 
         result_hash[page] = result
@@ -33,8 +41,8 @@ def check_pages_violate_page_order(
     return result_hash
 
 
-if __name__ == "__main__":
-
+def main(data):
+    """Main function for solution."""
     page_order, pages_to_update = parse_page_order(data)
     page_order_hash = defaultdict(list)
     pages_to_update_arr = [s.split(",") for s in pages_to_update if s]
@@ -64,5 +72,16 @@ if __name__ == "__main__":
                     stack.append(p)
             incorrect_arr.append(int(stack[len(stack) // 2]))
 
-    print("Solution for Part 1", sum(middle_pages))
-    print("Solution for Part 2", sum(incorrect_arr))
+    part_1 = sum(middle_pages)
+    part_2 = sum(incorrect_arr)
+
+    return part_1, part_2
+
+
+if __name__ == "__main__":
+
+    data = get_data()
+    part_1, part_2 = main(data)
+
+    print("Solution for Part 1", part_1)
+    print("Solution for Part 2", part_2)
