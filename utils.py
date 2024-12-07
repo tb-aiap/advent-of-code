@@ -1,8 +1,24 @@
+import time
+from functools import wraps
 from itertools import islice, tee
 from pathlib import Path
 from typing import Iterable, Iterator
 
 CONFIG_DIR = "./data"
+
+
+def timer(func):
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} took {end - start:01f} seconds")
+        return result
+
+    return wrapper
 
 
 def get_data(day_no: int, test_data: bool = False):
