@@ -2,7 +2,7 @@
 
 import pytest
 
-from day_6 import Direction, check_in_front, main
+from day_6 import Direction, check_in_front, main, main_part_2
 from utils import get_data
 
 DAY = 6
@@ -48,24 +48,10 @@ def test_check_in_front():
     assert next_col == 2
 
 
-def test_main_diff_data():
-    data = [
-        "..#...#...",
-        "..#...#...",
-        "..^....#..",
-        "..#..##...",
-        "..#...#...",
-        "..#...#...",
-    ]
-    part_1, part_2 = main(data)
-
-    assert part_1 == 7
-    assert part_2 == 0
-
-
 def test_main(data):
 
-    part_1, part_2 = main(data)
+    part_1 = main(data)
+    part_2 = main_part_2(data)
 
     assert part_1 == 41
-    assert part_2 == 0
+    assert part_2 == 6

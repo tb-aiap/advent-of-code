@@ -44,7 +44,6 @@ def check_in_front(curr_pos: tuple[int], curr_dir: Direction):
 def main(data):
 
     curr_pos = get_guard_position(data)
-    data[curr_pos[0]] = data[curr_pos[0]].replace("^", ".")
 
     curr_dir = Direction.UP
     path_taken = {curr_pos}  # INCLUDING THE GUARD STARTING POSITION!!!!!!
@@ -55,7 +54,7 @@ def main(data):
         if 0 > nr or nr >= len(data) or 0 > nc or nc >= len(data[0]):
             break
 
-        elif data[nr][nc] == ".":
+        elif data[nr][nc] in [".", "^"]:
             # move same dir
             curr_pos = (nr, nc)
             path_taken.add(curr_pos)
@@ -65,13 +64,68 @@ def main(data):
             curr_dir = Direction[TURN_RIGHT[curr_dir.name]]
 
     part_1 = len(path_taken)
-    return part_1, 0
+    return part_1
+
+
+def main_part_2(data):
+    from collections import defaultdict
+
+    curr_pos = get_guard_position(data)
+
+    ## Brute forcing every single potential placement
+    path_arr = set()
+    for i in range(len(data)):
+        for j in range(len(data)):
+            if data[i][j] == ".":
+                path_arr.add((i, j))
+    ## Brute forcing every single potential placement
+
+    curr_dir = Direction.UP
+    try_coord = path_arr.pop()
+    result = 0
+    moved_path = defaultdict(int)
+
+    while True:
+        nr, nc = check_in_front(curr_pos, curr_dir)
+        if 0 > nr or nr >= len(data) or 0 > nc or nc >= len(data[0]):
+            curr_pos = get_guard_position(data)
+            curr_dir = Direction.UP
+            moved_path = defaultdict(int)
+            try:
+                try_coord = path_arr.pop()
+            except:
+                print("Set is empty")
+                break
+            continue
+
+        elif data[nr][nc] in [".", "^"] and (nr, nc) != (try_coord[0], try_coord[1]):
+            # move same dir
+            curr_pos = (nr, nc)
+
+        elif data[nr][nc] == OBSTACLE or try_coord == (try_coord[0], try_coord[1]):
+            # turn right
+            curr_dir = Direction[TURN_RIGHT[curr_dir.name]]
+            moved_path[(curr_pos, curr_dir.name)] += 1
+            if moved_path[(curr_pos, curr_dir.name)] > 1:
+                result += 1
+                try:
+                    try_coord = path_arr.pop()
+                except:
+                    print("Set is empty")
+                    break
+                curr_pos = get_guard_position(data)
+                curr_dir = Direction.UP
+                del moved_path
+                moved_path = defaultdict(int)
+
+    return result
 
 
 if __name__ == "__main__":
 
     data = get_data(6)
-    part_1, part_2 = main(data)
+    part_1 = main(data)
+    part_2 = main_part_2(data)
 
     print("Solution for Part 1", part_1)
     print("Solution for Part 2", part_2)
