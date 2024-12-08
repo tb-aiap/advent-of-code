@@ -6,13 +6,8 @@ from utils import get_data, timer
 
 
 def is_within_bounds(point: tuple[int, int], grid: list[list[Any]]):
-
-    return (
-        point[0] >= 0
-        and point[0] < len(grid)
-        and point[1] >= 0
-        and point[1] < len(grid[0])
-    )
+    """Check if a point is within grid boundaries."""
+    return 0 <= point[0] < len(grid) and 0 <= point[1] < len(grid[0])
 
 
 def calculate_antinode(

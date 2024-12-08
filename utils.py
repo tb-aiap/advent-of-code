@@ -2,7 +2,7 @@ import time
 from functools import wraps
 from itertools import islice, tee
 from pathlib import Path
-from typing import Iterable, Iterator
+from typing import Any, Iterable, Iterator
 
 CONFIG_DIR = "./data"
 
@@ -53,3 +53,8 @@ def get_last_coord_rectangle(arr: list[tuple[int, int]]) -> tuple[int, int]:
     if len(r) > 1 or len(c) > 1:
         raise ValueError(f"Excepted 1 value of r and c . Received {r}, {c}")
     return r[0], c[0]
+
+
+def is_within_bounds(point: tuple[int, int], grid: list[list[Any]]):
+    """Check if a point is within grid boundaries."""
+    return 0 <= point[0] < len(grid) and 0 <= point[1] < len(grid[0])
