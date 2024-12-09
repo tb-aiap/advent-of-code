@@ -1,4 +1,3 @@
-from collections import deque
 from itertools import chain
 
 from utils import get_data, timer
@@ -57,11 +56,10 @@ def main(data):
 
     while l < r:
 
-        # print("Idx", r, expand_arr[r])
         if expand_arr[r] != ".":
             space_needed = expand_arr.count(expand_arr[r])
 
-            l = 0
+            l = expand_arr.index(".")
             while l < r and space_needed > count_free_space(l, expand_arr):
                 l += 1
 
@@ -81,7 +79,6 @@ def main(data):
         elif expand_arr[r] == ".":
             r -= 1
 
-    # print(expand_arr, len(expand_arr))
     part_2 = sum([i * idx for idx, i in enumerate(expand_arr) if i != "."])
 
     return part_1, part_2
