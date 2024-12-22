@@ -1,33 +1,21 @@
 """Solution for Day 22 2024."""
 
+import operator
 from collections import defaultdict
 
-from utils import get_data, timer
+from utils import get_data, sliding_window, timer
+
+PROCESS_1 = 64
+PROCESS_2 = 32
+PROCESS_3 = 2048
+PRUNE = 16777216
 
 
-def process_1(secret: int) -> int:
+def process(secret: int, operation, number) -> int:
 
-    result = secret * 64
+    result = operation(secret, number)
     mix = result ^ secret
-    prune = mix % 16777216
-
-    return prune
-
-
-def process_2(secret: int) -> int:
-
-    result = secret // 32
-    mix = result ^ secret
-    prune = mix % 16777216
-
-    return prune
-
-
-def process_3(secret: int) -> int:
-
-    result = secret * 2048
-    mix = result ^ secret
-    prune = mix % 16777216
+    prune = mix % PRUNE
 
     return prune
 
@@ -36,9 +24,9 @@ def generate(secret, number):
 
     result = secret
     for _ in range(number):
-        result = process_1(result)
-        result = process_2(result)
-        result = process_3(result)
+        result = process(result, operator.mul, PROCESS_1)
+        result = process(result, operator.floordiv, PROCESS_2)
+        result = process(result, operator.mul, PROCESS_3)
 
     return result
 
@@ -46,15 +34,14 @@ def generate(secret, number):
 # part 2
 def generate_prices_and_changes(secret):
 
-    sequence_set = dict()
     result = secret
     price_change = []
     prices = [result % 10]
 
     for _ in range(2000):
-        result = process_1(result)
-        result = process_2(result)
-        result = process_3(result)
+        result = process(result, operator.mul, PROCESS_1)
+        result = process(result, operator.floordiv, PROCESS_2)
+        result = process(result, operator.mul, PROCESS_3)
 
         single_digit = result % 10
         price_change.append(single_digit - prices[-1])
@@ -72,14 +59,13 @@ def main(data):
     sequence_set = defaultdict(list)
 
     for j in map(int, data):
-        prices, price_change = generate_prices_and_changes(j)
         seq_added = set()
-        for i in range(4, len(price_change)):
-            seq = tuple(price_change[i - 4 : i])
+        prices, price_change = generate_prices_and_changes(j)
 
-            if seq not in seq_added:
-                sequence_set[seq].append(prices[i])
-                seq_added.add(seq)
+        for idx, sw in enumerate(map(tuple, sliding_window(price_change, 4)), 4):
+            if sw not in seq_added:
+                sequence_set[sw].append(prices[idx])
+                seq_added.add(sw)
 
     part_2 = sum(max(sequence_set.values(), key=sum))
 
