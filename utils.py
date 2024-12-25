@@ -1,10 +1,19 @@
 import time
+from enum import Enum
 from functools import wraps
 from itertools import islice, tee
 from pathlib import Path
 from typing import Any, Iterable, Iterator
 
 CONFIG_DIR = "./data"
+
+
+class Direction(Enum):
+    # row, col
+    UP = (-1, 0)
+    DOWN = (1, 0)
+    LEFT = (0, -1)
+    RIGHT = (0, 1)
 
 
 def timer(func):
