@@ -1,3 +1,4 @@
+import csv
 import time
 from enum import Enum
 from functools import wraps
@@ -6,6 +7,10 @@ from pathlib import Path
 from typing import Any, Iterable, Iterator
 
 CONFIG_DIR = "./data"
+SUBMIT_PATH = "./submit"
+
+Path(CONFIG_DIR).mkdir(parents=True, exist_ok=True)
+Path(SUBMIT_PATH).mkdir(parents=True, exist_ok=True)
 
 
 class Direction(Enum):
@@ -67,3 +72,40 @@ def get_last_coord_rectangle(arr: list[tuple[int, int]]) -> tuple[int, int]:
 def is_within_bounds(point: tuple[int, int], grid: list[list[Any]]):
     """Check if a point is within grid boundaries."""
     return 0 <= point[0] < len(grid) and 0 <= point[1] < len(grid[0])
+
+
+def params_is_not_none(func):
+    """Decorator to check function args params."""
+
+    def wrapper(*args, **kwargs):
+        for ar in args:
+            if ar is None:
+                print("None detected in args, skipping submission", func.__name__)
+                return
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+@params_is_not_none
+def print_solution(year: int, day: int, part: str, ans: int | str) -> None:
+    """Caching the answers to a csv file."""
+
+    year_path = Path(SUBMIT_PATH, str(year))
+    if not year_path.is_dir():
+        year_path.mkdir(parents=True, exist_ok=True)
+
+    day_file = Path(year_path, f"{day}.csv")
+    if not day_file.is_file():
+        day_file.touch()
+
+    with open(day_file, "r+", newline="") as csvfile:
+
+        for row in csvfile.readlines():
+            if [part, str(ans)] == row.strip().split(","):
+                print("Already Submitted Answer as ", ans)
+                return
+
+        writer = csv.writer(csvfile, delimiter=",")
+        writer.writerow([part, ans])
+        print(f"Solution for {part}", ans)
