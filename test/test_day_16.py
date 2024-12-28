@@ -20,4 +20,4 @@ def test_main(data):
     part1, part2 = MAIN.main(data)
 
     assert part1 == 7036
-    assert part2 == None
+    assert part2 == 45

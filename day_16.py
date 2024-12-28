@@ -58,26 +58,33 @@ def main(data):
     start_pos = get_pos("S", data)
     start_dir = 2
 
-    visited = set()
-    starting_src = (0, start_dir, *start_pos, [(start_dir, *start_pos)])
+    starting_src = (0, start_dir, *start_pos, [])
     queue = [starting_src]
+    min_length = math.inf
+    min_cost = dict()
+    seats = set()
 
     while queue:
-
         score, direction, row, col, path = heapq.heappop(queue)
         if (row, col) == end_pos:
-            print("Found", score, direction, row, col, new_path)
-            break
+            min_length = min(min_length, score)
+            if min_length >= score:
+                curr_seats = {(x[1], x[2]) for x in new_path}
+                seats.update(curr_seats)
+            else:
+                break
 
-        if (direction, row, col) in visited:
+        if (direction, row, col) in min_cost and min_cost[
+            (direction, row, col)
+        ] < score:
             continue
-
-        visited.add((direction, row, col))
+        else:
+            min_cost[(direction, row, col)] = score
 
         nr = row + DIRECTION[direction][0]
         nc = col + DIRECTION[direction][1]
 
-        if data[nr][nc] in [".", "E"] and (direction, nr, nc) not in visited:
+        if data[nr][nc] in [".", "E"] and (direction, nr, nc) not in path:
             # go straight next
             new_path = path.copy()
             new_path.append((direction, nr, nc))
@@ -85,30 +92,18 @@ def main(data):
 
         left = (direction - 1) % 4
         right = (direction + 1) % 4
-        if direction == 0:
-            assert left == 3
-            assert right == 1
-        if direction == 1:
-            assert left == 0
-            assert right == 2
-        if direction == 2:
-            assert left == 1
-            assert right == 3
-        if direction == 3:
-            assert left == 2
-            assert right == 0
 
-        if (left, row, col) not in visited:
+        if (left, row, col) not in path:
             new_path = path.copy()
             new_path.append((left, row, col))
             heapq.heappush(queue, (score + 1000, left, row, col, new_path))
 
-        if (right, nr, col) not in visited:
+        if (right, nr, col) not in path:
             new_path = path.copy()
             new_path.append((right, row, col))
             heapq.heappush(queue, (score + 1000, right, row, col, new_path))
 
-    part_1, part_2 = score, None
+    part_1, part_2 = min_length, len(seats)
     return part_1, part_2
 
 
