@@ -11,7 +11,13 @@ def get_coords(data: list[str]):
 
 
 def bfs(start: tuple[int, int], end: tuple[int, int], grid: list[list[str]]):
+    """Using BFS to get the shortest path, including tracked path.
 
+    Args:
+        start (tuple[int, int]): Starting position
+        end (tuple[int, int]): Ending position
+        grid (list[list[str]]): The maze
+    """
     path = [(start)]
     visited = set()
     queue = deque()
@@ -55,10 +61,12 @@ def main(data):
 
     part_1 = bfs((0, 0), end, grid) - 1
 
+    # simulate remaining bytes falling get_coords iterator.
     while True:
         x, y = next(coords)
         grid[y][x] = "#"
         if bfs((0, 0), end, grid) is None:
+            # if no path after exhausting all queue
             break
 
     part_2 = f"{x},{y}"
