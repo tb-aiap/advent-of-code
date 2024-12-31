@@ -4,16 +4,6 @@ from dataclasses import dataclass, field
 
 import utils
 
-COMBO = {
-    0: 0,
-    1: 1,
-    2: 2,
-    3: 3,
-    4: "A",
-    5: "B",
-    6: "C",
-}
-
 
 @dataclass
 class ThreeBitComputer:
@@ -28,78 +18,83 @@ class ThreeBitComputer:
         while self.ptr < len(self.program):
             p = self.program[self.ptr]
             c = self.program[self.ptr + 1]
-            output = getattr(self, f"opcode_{p}")(c)
 
+            output = self.run_program(p, c)
             if output is not None:
                 result.append(str(output))
 
-            if p != 3:
-                self.ptr += 2
+            self.ptr += 2
 
         return ",".join(result)
 
-    def get_combo(self, v):
+    def run_program(self, optcode, value):
 
-        combo = COMBO.get(v)
-        if isinstance(combo, str):
-            return self.register[combo]
+        combo = {
+            0: 0,
+            1: 1,
+            2: 2,
+            3: 3,
+            4: self.register["A"],
+            5: self.register["B"],
+            6: self.register["C"],
+        }
 
-        elif isinstance(combo, int):
-            return combo
+        match optcode:
+            case 0:
+                self.register["A"] = self.register["A"] // (2 ** combo[value])
+            case 1:
+                self.register["B"] = self.register["B"] ^ value
+            case 2:
+                self.register["B"] = combo[value] % 8
+            case 3:
+                if self.register["A"]:
+                    self.ptr = value - 2
+            case 4:
+                self.register["B"] = self.register["B"] ^ self.register["C"]
+            case 5:
+                return combo[value] % 8
+            case 6:
+                self.register["B"] = self.register["A"] // (2 ** combo[value])
+            case 7:
+                self.register["C"] = self.register["A"] // (2 ** combo[value])
 
-        else:
-            raise NotImplementedError(f"Combo value {v} results in {combo}")
+    def solve_mulitple(self):
+        """There many various combinations of bits that add up to the desired answer,
+        we try various combinations via DFS to get the final result that is the same as program list.
 
-    def opcode_0(self, v) -> None:
-        numerator = self.register["A"]
-        denominator = 2 ** self.get_combo(v)
-        self.register["A"] = numerator // denominator
+        Returns:
+            _type_: _description_
+        """
+        target = self.program
+        stack = [(0, len(self.program) - 1)]
+        solution = []
+        while stack:
+            possible_a, indx = stack.pop()
+            for pos in range(8):
+                # potential to clean this up wihout using hash map
+                candidate = (possible_a * 8) + pos
+                self.register["A"] = candidate
+                self.register["B"] = 0
+                self.register["C"] = 0
+                self.ptr = 0
 
-        return
+                result = list(map(int, self.solve().split(",")))
 
-    def opcode_1(self, v) -> None:
+                if result == target[indx:]:
+                    print(
+                        f"Candidate {candidate} match: result {result} = target {target[indx:]}"
+                    )
+                    next_a = (candidate, indx - 1)
+                    stack.append(next_a)
 
-        self.register["B"] = self.register["B"] ^ v
-
-        return
-
-    def opcode_2(self, v) -> None:
-
-        self.register["B"] = self.get_combo(v) % 8
-
-    def opcode_3(self, v) -> None:
-        if self.register["A"] == 0:
-            self.ptr += 2
-        else:
-            self.ptr = v
-
-        return
-
-    def opcode_4(self, v) -> None:
-
-        self.register["B"] = self.register["B"] ^ self.register["C"]
-
-        return
-
-    def opcode_5(self, v):
-        "Outputs"
-        return self.get_combo(v) % 8
-
-    def opcode_6(self, v):
-        numerator = self.register["A"]
-        denominator = 2 ** self.get_combo(v)
-        self.register["B"] = numerator // denominator
-
-        return
-
-    def opcode_7(self, v):
-        numerator = self.register["A"]
-        denominator = 2 ** self.get_combo(v)
-        self.register["C"] = numerator // denominator
-
-        return
+                    if indx == 0:
+                        solution.append(candidate)
+        print("These are the possible solution", solution)
+        print("The minimum is", min(solution))
+        return min(solution)
 
 
+@utils.timer
 def main(data: list[str]):
 
     register = dict()
@@ -111,12 +106,11 @@ def main(data: list[str]):
         if row.startswith("Program"):
             program = [int(i) for i in row.split(" ")[-1].split(",")]
 
-    prog = ThreeBitComputer(program=program, register=register)
+    prog = ThreeBitComputer(program=program, register=register.copy())
     part_1 = prog.solve()
+    part_2 = prog.solve_mulitple()
 
-    print(part_1)
-
-    return part_1, None
+    return part_1, part_2
 
 
 if __name__ == "__main__":

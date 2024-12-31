@@ -19,5 +19,5 @@ def test_main(data):
 
     part1, part2 = MAIN.main(data)
 
-    assert part1 == "4,6,3,5,6,3,5,2,1,0"
-    assert part2 == None
+    assert part1 == "5,7,3,0"  # uses part 2 example instead.
+    assert part2 == 117440
