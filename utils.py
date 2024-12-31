@@ -101,9 +101,10 @@ def print_solution(year: int, day: int, part: str, ans: int | str) -> None:
 
     with open(day_file, "r+", newline="") as csvfile:
 
-        for row in csvfile.readlines():
-            if [part, str(ans)] == row.strip().split(","):
-                print("Already Submitted Answer as ", ans)
+        reader = csv.reader(csvfile, delimiter=",")
+        for row in reader:
+            if [part, str(ans)] == row:
+                print(f"Already Submitted Answer for {part} as {ans}")
                 return
 
         writer = csv.writer(csvfile, delimiter=",")
