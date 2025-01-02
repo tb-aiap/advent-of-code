@@ -1,7 +1,6 @@
 """Solution for Day 20 2024."""
 
-from collections import defaultdict, deque
-from itertools import chain
+from collections import deque
 
 import utils
 
@@ -12,26 +11,6 @@ def get_pos(position: str, grid: list[list[str]]) -> tuple[int, int]:
         if position in r:
             cidx = grid[ridx].index(position)
             return ridx, cidx
-
-
-def cheat_here(position: tuple[int, int], grid: list[list[str]]):
-
-    cheat_arr = set()
-    for dir in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-        block_row = position[0] + dir[0]
-        block_col = position[1] + dir[1]
-
-        cheat_row = block_row + dir[0]
-        cheat_col = block_col + dir[1]
-
-        if (
-            utils.is_within_bounds((cheat_row, cheat_col), grid)
-            and grid[block_row][block_col] == "#"
-            and grid[cheat_row][cheat_col] != "#"
-        ):
-            cheat_arr.add(((position), (cheat_row, cheat_col)))
-
-    return cheat_arr
 
 
 def scan_cheat(
@@ -52,7 +31,7 @@ def get_track(
     grid: list[list[str]],
     obstacle: list[str],
 ):
-
+    """BFS to get shortest path track."""
     visited = set()
     queue = deque()
     queue.append((start[0], start[1], [start]))
@@ -78,36 +57,28 @@ def get_track(
                 queue.append((nr, nc, new_path))
 
 
+def cheat(shortest_path, time_save, cheat_limit):
+    """Try to cheat by skipping X seconds ahead, with available cheat limit."""
+    ans = 0
+    for idx, coord in enumerate(shortest_path):
+        for nidx in range(idx + time_save, len(shortest_path)):
+            cheat_path = scan_cheat(coord, shortest_path[nidx])
+            time_saved = nidx - idx - cheat_path
+            if cheat_path <= cheat_limit and time_saved >= time_save:
+                ans += 1
+    return ans
+
+
 @utils.timer
 def main(grid: list[list[str]]):
 
-    TIME_SAVE = 100
     start_pos = get_pos("S", grid)
     end_pos = get_pos("E", grid)
-    cheat_hash = dict()
     shortest = get_track(start_pos, end_pos, grid, obstacle=["#"])
-    result = 0
-    for cheat_start, cheat_end in chain.from_iterable(
-        cheat_here(coord, grid) for coord in shortest
-    ):
-        if shortest.index(cheat_end) > shortest.index(cheat_start):
-            time_use = shortest.index(cheat_end) - shortest.index(cheat_start) - 2
-            cheat_hash.setdefault(time_use, 0)
-            cheat_hash[time_use] += 1
-            if time_use >= 100:
-                result += 1
 
-    cheat_hash_2 = defaultdict(int)
-    for idx, coord in enumerate(shortest):
-        save_time = idx + TIME_SAVE
-        for nidx in range(save_time, len(shortest)):
-            cheat_path = scan_cheat(coord, shortest[nidx])
-            time_saved = nidx - idx - cheat_path
-            if cheat_path <= 20 and time_saved >= TIME_SAVE:
-                cheat_hash_2[time_saved] += 1
-
-    part_1 = result
-    part_2 = sum(cheat_hash_2.values())
+    print("Calculating answer.")
+    part_1 = cheat(shortest, time_save=100, cheat_limit=2)
+    part_2 = cheat(shortest, time_save=100, cheat_limit=20)
 
     return part_1, part_2
 
