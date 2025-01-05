@@ -45,8 +45,10 @@ def number_pad_direction(curr, next_loc):
         steps = row + col
     elif curr[1] == 0 and next_loc[0] == 3:
         steps = col + row
-    else:
+    elif "<" in col:
         steps = col + row
+    else:
+        steps = row + col
 
     return steps
 
@@ -64,9 +66,10 @@ def keyboard_direction(curr, next_loc):
         steps = row + col
     elif curr == (1, 0):
         steps = col + row
-    else:
-        # steps = row + col
+    elif "<" in col:
         steps = col + row
+    else:
+        steps = row + col
 
     return steps
 
@@ -100,14 +103,14 @@ def push_pad(target, pad: list[list[str]]):
 @utils.timer
 def main(data):
     print()
-    robot_level = 2
+    robot_level = 25
     result = 0
     for num in data:
         steps = push_pad(num, DOOR_PAD)
         print(steps)
         for _ in range(robot_level):
             steps = push_pad(steps, DIR_PAD)
-            # print(steps)
+            print(steps)
 
         complexity = int(num[:-1]) * len(steps)
         result += complexity
