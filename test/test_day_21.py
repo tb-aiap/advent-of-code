@@ -16,4 +16,3 @@ def test_main(data):
 
     # You can modify these assertions based on the actual expected values for the day
     assert part1 == 126384
-    assert part2 == None

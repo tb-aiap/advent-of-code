@@ -1,6 +1,7 @@
 """Solution for Day 21 2024."""
 
 import functools
+from collections import defaultdict
 
 import utils
 
@@ -100,26 +101,46 @@ def push_pad(target, pad: list[list[str]]):
     return steps
 
 
+def recursion(s: str, depth: int, memo):
+    if depth == 0:
+        return len(s)
+
+    # return result if recorded
+    if (s, depth) in memo:
+        return memo[(s, depth)]
+
+    result = 0
+
+    # if not recorded, calculate the result and store it
+    for seq in s.split("A")[:-1]:
+        next_seq = push_pad(seq + "A", DIR_PAD)
+        result += recursion(next_seq, depth - 1, memo)
+
+    memo[(s, depth)] = result
+
+    return result
+
+
 @utils.timer
 def main(data):
-    print()
-    robot_level = 25
-    result = 0
+    part_1_robot_level = 2
+    ans_1 = 0
+
+    part_2_robot_level = 25
+    ans_2 = 0
+
+    memo = defaultdict(int)
     for num in data:
-        steps = push_pad(num, DOOR_PAD)
-        print(steps)
-        for _ in range(robot_level):
-            steps = push_pad(steps, DIR_PAD)
-            print(steps)
+        door_seq = push_pad(num, DOOR_PAD)
+        result_1 = recursion(door_seq, part_1_robot_level, memo)
+        complexity_1 = int(num[:-1]) * result_1
+        ans_1 += complexity_1
 
-        complexity = int(num[:-1]) * len(steps)
-        result += complexity
-        print(num, len(steps))
+        result_2 = recursion(door_seq, part_2_robot_level, memo)
+        complexity_2 = int(num[:-1]) * result_2
+        ans_2 += complexity_2
 
-    part_1 = result
-    part_2 = None
-
-    return part_1, part_2
+    return ans_1, ans_2
 
 
 if __name__ == "__main__":
