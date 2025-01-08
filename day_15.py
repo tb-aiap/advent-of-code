@@ -1,7 +1,5 @@
 """Solution for Day 15 2024."""
 
-import pprint
-
 from utils import Direction, get_data, print_solution
 
 DIR = {
@@ -32,7 +30,6 @@ def move_in_front(curr_pos: tuple[int], curr_dir: Direction, grid: list[list[str
     stack = [(r, c)]
     while stack and grid[r][c] != "#":
         r, c = check_in_front((r, c), curr_dir)
-        print(stack, r, c)
         if grid[r][c] == ".":
             while stack:
                 sr, sc = stack.pop()
@@ -52,18 +49,11 @@ def can_move_upsize(curr_pos: tuple[int], curr_dir: Direction, grid: list[list[s
         return 1
 
     if grid[r][c] == "]":
-        print("realign r, c")
         # align it to left '[' if its right ']'
         c = c - 1
 
     lr, lc = check_in_front((r, c), curr_dir)
     rr, rc = check_in_front((r, c + 1), curr_dir)
-
-    print("can move 2")
-    print(grid[r][c], r, c, curr_pos)
-    print(grid[lr][lc], lr, lc, curr_pos)
-    print(grid[rr][rc], rr, rc, curr_pos)
-    print()
 
     if grid[lr][lc] == "." and grid[rr][rc] == ".":
         return 0
@@ -83,12 +73,10 @@ def can_move_upsize(curr_pos: tuple[int], curr_dir: Direction, grid: list[list[s
 def move_upsize_up_down(
     curr_pos: tuple[int], curr_dir: Direction, grid: list[list[str]]
 ):
-    print(move_upsize_up_down.__name__, curr_dir, curr_pos)
 
     r, c = curr_pos[0], curr_pos[1]
     if grid[r][c] == "]":
         # align it to left '[' if its right ']'
-
         c = c - 1
 
     lr, lc = check_in_front((r, c), curr_dir)
@@ -99,9 +87,6 @@ def move_upsize_up_down(
     if grid[rr][rc] in "[]":
         move_upsize_up_down((rr, rc), curr_dir, grid)
 
-    # print("moving parts", grid[nr][nc], grid[nr][nc + 1], grid[nr][nc - 1])
-    print("shifting", move_upsize_up_down.__name__, (lr, lc), (r, c))
-    # print(r, c, nr, nc)
     if grid[lr][lc] == "." and grid[rr][rc] == ".":
         grid[lr][lc] = grid[r][c]
         grid[r][c] = "."
@@ -145,18 +130,14 @@ def main(data):
     # PART 2 - second warehouse
     grid = [[j for j in upsize(i)] for i in data[: data.index("")]]
     guard_pos = [(idx, i.index("@")) for idx, i in enumerate(grid) if "@" in i][0]
-    print("Part 2")
-    print_grid(grid)
-    for d in moves[:]:
-        print("MOVE", d)
+
+    for d in moves:
 
         if d in "<>":
-            print("moving", d)
             grid = move_in_front(guard_pos, DIR[d], grid)
-            # guard_pos = get_guard_pos(grid)
         else:
             in_front_coord = check_in_front(guard_pos, DIR[d])
-            print("G", guard_pos, "F", in_front_coord)
+
             if grid[in_front_coord[0]][in_front_coord[1]] == ".":
                 grid[guard_pos[0]][guard_pos[1]] = "."
                 grid[in_front_coord[0]][in_front_coord[1]] = "@"
@@ -168,10 +149,6 @@ def main(data):
                 grid[guard_pos[0]][guard_pos[1]] = "."
                 grid[in_front_coord[0]][in_front_coord[1]] = "@"
 
-            else:
-                print("CANNOT MOVE", d)
-                # print_grid(grid)
-                ...
         guard_pos = get_guard_pos(grid)
 
         # validating pushes
