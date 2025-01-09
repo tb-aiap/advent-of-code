@@ -1,6 +1,6 @@
 """Solution for Day 15 2024."""
 
-from utils import Direction, get_data, print_solution
+from utils import Direction, get_data, print_solution, timer
 
 DIR = {
     "^": Direction.UP,
@@ -111,6 +111,7 @@ def print_grid(grid):
         print("".join(r))
 
 
+@timer
 def main(data):
     grid = [[j for j in i] for i in data[: data.index("")]]
     moves = "".join(data[data.index("") + 1 :])
@@ -143,7 +144,6 @@ def main(data):
                 grid[in_front_coord[0]][in_front_coord[1]] = "@"
 
             elif can_move_upsize(in_front_coord, DIR[d], grid) == 0:
-                print("CAN MOVE", d)
                 grid = move_upsize_up_down(in_front_coord, DIR[d], grid)
                 # print_grid(grid)
                 grid[guard_pos[0]][guard_pos[1]] = "."
