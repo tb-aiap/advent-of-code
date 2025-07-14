@@ -3,8 +3,11 @@
 import argparse
 import importlib
 
+from rich.console import Console
+
 import utils
 
+console = Console()
 
 def get_argparse() -> argparse.ArgumentParser:
     """Parse the required arguments for AOC solutions."""
@@ -24,7 +27,7 @@ def main(parser: argparse.ArgumentParser) -> None:
     test_data = args.t
 
     if test_data:
-        print("Running Test Data")
+        console.print("Running Test Data", style="bold blue")
 
     solve = importlib.import_module(f"{year}.day_{day:02d}")
 

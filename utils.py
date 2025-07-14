@@ -6,6 +6,10 @@ from itertools import islice, tee
 from pathlib import Path
 from typing import Any, Iterable, Iterator
 
+from rich.console import Console
+
+console = Console()
+
 CONFIG_DIR = "./data"
 SUBMIT_PATH = "./submit"
 
@@ -29,7 +33,7 @@ def timer(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        print(f"{func.__name__} took {end - start:01f} seconds")
+        console.print(f"{func.__name__} took {end - start:01f} seconds", style="yellow")
         return result
 
     return wrapper
@@ -80,7 +84,7 @@ def params_is_not_none(func):
     def wrapper(*args, **kwargs):
         for ar in args:
             if ar is None:
-                print("None detected in args, skipping submission", func.__name__)
+                console.print("None detected in args, skipping submission", func.__name__)
                 return
         return func(*args, **kwargs)
 
@@ -104,9 +108,9 @@ def print_solution(year: int, day: int, part: str, ans: int | str) -> None:
         reader = csv.reader(csvfile, delimiter=",")
         for row in reader:
             if [part, str(ans)] == row:
-                print(f"Already Submitted Answer for {part} as {ans}")
+                console.print(f"Already Submitted Answer for {part} as {ans}", style="italic green")
                 return
 
         writer = csv.writer(csvfile, delimiter=",")
         writer.writerow([part, ans])
-        print(f"Solution for {part}", ans)
+        console.print(f"Solution for {part}", ans, style="bold green")
