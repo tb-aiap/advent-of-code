@@ -3,12 +3,12 @@ import sys
 from pathlib import Path
 
 import typer
+import utils
 from typing_extensions import Annotated
 
 add_path = Path(__file__, f"../..").resolve()
 sys.path.append(add_path.as_posix())
 
-import utils
 
 app = typer.Typer(
     help="CLI for Advent of Code management over multiple years.",
