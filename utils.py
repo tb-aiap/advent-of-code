@@ -84,7 +84,9 @@ def params_is_not_none(func):
     def wrapper(*args, **kwargs):
         for ar in args:
             if ar is None:
-                console.print("None detected in args, skipping submission", func.__name__)
+                console.print(
+                    "None detected in args, skipping submission", func.__name__
+                )
                 return
         return func(*args, **kwargs)
 
@@ -108,9 +110,38 @@ def print_solution(year: int, day: int, part: str, ans: int | str) -> None:
         reader = csv.reader(csvfile, delimiter=",")
         for row in reader:
             if [part, str(ans)] == row:
-                console.print(f"Already Submitted Answer for {part} as {ans}", style="italic green")
+                console.print(
+                    f"Already Submitted Answer for {part} as {ans}",
+                    style="italic green",
+                )
                 return
 
         writer = csv.writer(csvfile, delimiter=",")
         writer.writerow([part, ans])
         console.print(f"Solution for {part}", ans, style="bold green")
+
+
+def main_code_template(day, year=2024):
+    return f"""\
+\"\"\"Solution for Day {day} {year}.\"\"\"
+
+import utils
+
+
+@utils.timer
+def main(data):
+
+    part_1 = None
+    part_2 = None
+
+    return part_1, part_2
+
+
+if __name__ == "__main__":
+
+    data = utils.get_data({day})
+    part_1, part_2 = main(data)
+
+    utils.print_solution({year}, {day}, "Part 1", part_1)
+    utils.print_solution({year}, {day}, "Part 2", part_2)
+"""

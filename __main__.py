@@ -7,7 +7,6 @@ import typer
 from rich.console import Console
 from typing_extensions import Annotated
 
-import retrieve_data
 import utils
 
 CONFIG = {
@@ -43,7 +42,7 @@ def create(year: int):
     Path(year_folder, "__init__.py").touch()
 
     for i in range(1, 26):
-        code_template = retrieve_data.main_code_template(i, year=year)
+        code_template = utils.main_code_template(i, year=year)
         day_file = Path(year_folder, f"day_{i:02d}.py")
         if not day_file.is_file():
             with open(day_file.as_posix(), mode="w") as file:
