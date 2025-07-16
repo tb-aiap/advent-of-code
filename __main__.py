@@ -1,17 +1,19 @@
 """Main Entry point for Advent of Code Solutions."""
 
 import importlib
+import os
 from pathlib import Path
 
+import requests
 import typer
+from dotenv import load_dotenv
 from rich.console import Console
 from typing_extensions import Annotated
 
 import utils
 
-CONFIG = {
-    "work_dir": Path.cwd(),
-}
+load_dotenv()
+CONFIG = {"work_dir": Path.cwd(), "data_dir": "./data"}
 
 app = typer.Typer(
     help="CLI for Advent of Code management over multiple years.",
@@ -21,6 +23,14 @@ app = typer.Typer(
 console = Console()
 
 
+def valid_year(year: int):
+    """Check that year is within AOC calendar limits, from 2015 onwards."""
+    import datetime
+
+    year_now = datetime.datetime.now().year
+    return 2015 <= year < year_now
+
+
 @app.command()
 def create(year: int):
     """Create folder and respective py files for selected year.
@@ -28,6 +38,9 @@ def create(year: int):
     Args:
         year (int): YEAR in YYYY format
     """
+    if not valid_year(year):
+        console.print(f"Year {year} is not available in AOC events", style="red")
+        return
     work_dir = CONFIG["work_dir"]
     console.print(f"Creating folder for {year} in {work_dir}", style="bold")
     year_folder = Path(work_dir, str(year))
@@ -52,7 +65,13 @@ def create(year: int):
 
 
 @app.command()
-def retrieve(year: int, day: int):
+def retrieve(
+    year: int,
+    day: int,
+    overwrite: Annotated[
+        bool, typer.Option("-o", help="Retrieve and Overwrite exisiting data")
+    ] = False,
+):
     """
     Retrieve AOC data from provided year and day.
 
@@ -62,7 +81,45 @@ def retrieve(year: int, day: int):
         year (int): Year of the AOC
         day (int): Which day of the AOC
     """
-    print(f"Retrieving {year} and {day}")
+    console.print(f"Retrieving data from YEAR {year} and DAY {day}", style="blue")
+
+    data_dir = CONFIG["data_dir"]
+    year_path = Path(data_dir, str(year))
+    year_path.mkdir(parents=True, exist_ok=True)
+
+    day_txt = Path(year_path, f"input_{day:02d}.txt")
+    day_test_txt = Path(year_path, f"test_input_{day:02d}.txt")
+
+    if day_txt.is_file() and not overwrite:
+        console.print(f"{day_txt} already exists.", style="blue")
+        return
+
+    if not day_test_txt.is_file() or overwrite:
+        day_test_txt.touch()
+
+    try:
+        resp = requests.get(
+            url=f"https://adventofcode.com/{year}/day/{day}/input",
+            headers={
+                "User-Agent": os.getenv("USER_AGENT"),
+                "Cookie": os.getenv("SESSION"),
+            },
+        )
+        if resp.status_code >= 400:
+            console.print(f"Error {resp} occured")
+            return
+    except Exception as e:
+        console.print(f"Error in requesting data {e=}", style="bold red")
+        return
+
+    with open(day_txt.as_posix(), mode="w") as f:
+        f.write(resp.text)
+
+    console.print(
+        f"Successfully retrieve {year}/{day:02d} data."
+        f"Please manually copy and paste test data in created {day_test_txt.name} file"
+    )
+    return
 
 
 @app.command()
