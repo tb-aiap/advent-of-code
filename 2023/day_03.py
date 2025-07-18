@@ -46,59 +46,48 @@ def number_near_gear(data: list[list[str]], r: int, c: int) -> tuple[int]:
     return -1, -1
 
 
-def solve_1(data: list[list[str]]) -> int:
+def loop_through_chars(data: list[list[str]], part2: bool = False) -> int:
     """Solution for part 1."""
     result = 0
+    gear_ratio = defaultdict(list)
     for r in range(len(data)):
         number_holder = ""
         is_near_parts = False
+        gear_coord = -1, -1
         for c in range(len(data[r])):
             val = data[r][c]
             if val.isnumeric():
                 number_holder += val
                 if not is_near_parts:
                     is_near_parts = number_near_parts(data, r, c)
+                if part2 and gear_coord == (-1, -1):
+                    gear_coord = number_near_gear(data, r, c)
             else:
                 if number_holder and is_near_parts:
                     result += int(number_holder)
                     is_near_parts = False
+                if part2 and number_holder and gear_coord != (-1, -1):
+                    gear_ratio[gear_coord].append(int(number_holder))
+                    gear_coord = -1, -1
                 number_holder = ""
 
         if number_holder and is_near_parts:
             result += int(number_holder)
             is_near_parts = False
-
-    return result
-
-
-def solve_2(data: list[list[str]]) -> dict[tuple[int], list[int]]:
-    """Solution for part 2."""
-    gear_ratio = defaultdict(list)
-    for r in range(len(data)):
-        number_holder = ""
-        gear_coord = -1, -1
-        for c in range(len(data[r])):
-            val = data[r][c]
-            if val.isnumeric():
-                number_holder += val
-                if gear_coord == (-1, -1):
-                    gear_coord = number_near_gear(data, r, c)
-            else:
-                if number_holder and gear_coord != (-1, -1):
-                    gear_ratio[gear_coord].append(int(number_holder))
-                    gear_coord = -1, -1
-                number_holder = ""
-        if number_holder and gear_coord != (-1, -1):
+        if part2 and number_holder and gear_coord != (-1, -1):
             gear_ratio[gear_coord].append(int(number_holder))
             gear_coord = -1, -1
-    return gear_ratio
+
+    if part2:
+        result = sum(reduce(mul, v, 1) for v in gear_ratio.values() if len(v) == 2)
+    return result
 
 
 @utils.timer
 def main(data):
 
-    part_1 = solve_1(data)
-    part_2 = sum(reduce(mul, v, 1) for v in solve_2(data).values() if len(v) == 2)
+    part_1 = loop_through_chars(data)
+    part_2 = loop_through_chars(data, part2=True)
 
     return part_1, part_2
 
