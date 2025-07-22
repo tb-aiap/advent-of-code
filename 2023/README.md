@@ -20,3 +20,13 @@ Constant splitting of text to gather the required input text.
 - **Part 1**: The total score, where each card's score is `2**(matches - 1)` if at least one number matches.
 
 - **Part 2**: Maintain the function for part 1, but multiply results by number of copies it has. Add the number of copies into subsequent cards. 
+
+### Day 5
+
+Stuggled a few days with this one trying to understand interval overlapping.
+
+- **Part 1**: user regex to parse the seed value. Use a hash map to parse mappings for each level from level 1 to level 7.
+    - for each seed, run through the mapping from level 1 to level 7
+- **Part 2**: convert each seeds array into interval.
+    1. Focus on passing a single array to the next level and remember the next level.
+    2. If a seed range is not overlap in the mapping, try to match it again in the `for map in mapping` loop. Only pass it to the next level unmapped if cannot find any mapping ALL of the same level.
