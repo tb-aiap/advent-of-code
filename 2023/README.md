@@ -30,3 +30,11 @@ Stuggled a few days with this one trying to understand interval overlapping.
 - **Part 2**: convert each seeds array into interval.
     1. Focus on passing a single array to the next level and remember the next level.
     2. If a seed range is not overlap in the mapping, try to match it again in the `for map in mapping` loop. Only pass it to the next level unmapped if cannot find any mapping ALL of the same level.
+
+### Day 6
+
+- **Part 1**: for each race, search through all combinations 1 by 1, increasing holding time.
+- **Part 2**: Either use the same method, or use binary search. 
+    1. Treat the input as one long race
+    2. Binary search towards the left to find shortest time holding button to win race, any shorter is too slow
+    3. Binary search towards the right to find the longest time holding button to win race, but any longer, not enough time to clear.
