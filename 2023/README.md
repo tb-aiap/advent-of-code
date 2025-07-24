@@ -38,3 +38,17 @@ Stuggled a few days with this one trying to understand interval overlapping.
     1. Treat the input as one long race
     2. Binary search towards the left to find shortest time holding button to win race, any shorter is too slow
     3. Binary search towards the right to find the longest time holding button to win race, but any longer, not enough time to clear.
+
+### Day 7
+
+Create hashmap of suites and card value to assign as number
+- **Part 1**: in order to sort the card by their values, assign a 2 digit value according to the order of their comparison. 
+    - suite = value * 10000000000
+    - card1 = value * 100000000
+    - card2 = value * 1000000
+    - card3 = value * 10000
+    - card4 = value * 100
+    - card5 = value * 1
+- **Part 2**: Same steps as above with modification.
+    - If `J` present in card, Try to get best_suite by replacing all possible combinations.
+    - If `J` reassign to value 0, below `2` which is 1.
