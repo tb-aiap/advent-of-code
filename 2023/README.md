@@ -52,3 +52,12 @@ Create hashmap of suites and card value to assign as number
 - **Part 2**: Same steps as above with modification.
     - If `J` present in card, Try to get best_suite by replacing all possible combinations.
     - If `J` reassign to value 0, below `2` which is 1.
+
+### Day 8 : Haunted Wasteland
+
+Use iterator to cycle through the camel's instruction infinitely.
+
+Convert the maps into a hashmap for indexing L and R location
+
+- **Part 1**: Loop through the instructions from `AAA` till `ZZZ`
+- **Part 2**: Each starting point `**A` hits their own respective `**Z` in a cycle. But each cycle is different, so LCM to find the time all of them hits it together. 
