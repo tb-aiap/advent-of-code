@@ -61,3 +61,8 @@ Convert the maps into a hashmap for indexing L and R location
 
 - **Part 1**: Loop through the instructions from `AAA` till `ZZZ`
 - **Part 2**: Each starting point `**A` hits their own respective `**Z` in a cycle. But each cycle is different, so LCM to find the time all of them hits it together. 
+
+### Day 9: Mirage Maintenance
+
+- **Part 1**: From top of the list, get the array difference and sum up the last index of the array
+- **Part 2**: To get the front of the iteration, work from the bottom using the same formula.
