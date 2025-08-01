@@ -66,3 +66,11 @@ Convert the maps into a hashmap for indexing L and R location
 
 - **Part 1**: From top of the list, get the array difference and sum up the last index of the array
 - **Part 2**: To get the front of the iteration, work from the bottom using the same formula.
+
+### Day 10: Pipe Maze
+
+- **Part 1**: A dirty method to try and follow the pipe logic from "S" starting point back to same starting point. It returns an `array` of coordinates. 
+- **Part 2**: Struggled a few days to test own methods and various style. Settled with Reddit's most mentioned method of Pick's formula and Shoelace formula. 
+    - Testing but hard to make it work.
+    - BFS flooding from outer area, but there are smaller gaps that cannot be reached by BFS but it is not an interior
+    - Ray casting to calcualte even and odd points, something wrong with my methodology to get it correct.
