@@ -74,3 +74,13 @@ Convert the maps into a hashmap for indexing L and R location
     - Testing but hard to make it work.
     - BFS flooding from outer area, but there are smaller gaps that cannot be reached by BFS but it is not an interior
     - Ray casting to calcualte even and odd points, something wrong with my methodology to get it correct.
+
+### Day 11: Cosmic Expansion 
+
+- **Part 1**: 
+    - Preprocess the empty rows/cols with a [0, 1]  array list.
+    - For the distance between each galaxy, calculate manhattan distance
+    - Slice the empty row array list for sum of 1s within that list
+    - multiply it by expansion rate of 2
+- **Part 2**: 
+    - set expansion rate to 1,000,000
