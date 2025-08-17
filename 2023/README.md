@@ -84,3 +84,10 @@ Convert the maps into a hashmap for indexing L and R location
     - multiply it by expansion rate of 2
 - **Part 2**: 
     - set expansion rate to 1,000,000
+
+
+### Day 12: Hot Springs
+
+Used ChatGpt to understand the optimal solution.
+
+- **Part 1 & 2** : Walk through each idx of the springs, replacing '?' with both '.' and '#'. Upon placing a `.`, if `#` is there, try to complete the grouping else reject it. Use a memo dictionary to store previously accessed indexes.
