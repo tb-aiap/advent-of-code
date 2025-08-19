@@ -91,3 +91,27 @@ Convert the maps into a hashmap for indexing L and R location
 Used ChatGpt to understand the optimal solution.
 
 - **Part 1 & 2** : Walk through each idx of the springs, replacing '?' with both '.' and '#'. Upon placing a `.`, if `#` is there, try to complete the grouping else reject it. Use a memo dictionary to store previously accessed indexes.
+
+### Day 13: Point of Incidence 
+
+- **Part 1**: 
+    - For each row, compare 2 adjacent row. If they are similar, initiate `while` loop to check reflection (l - 1 and r + 1) still remains the same.
+    - If the loops break, it is not a valid reflection. (some portion on both ends are not part of the reflection)
+    - If the loops end, we have a reflect from index `i`
+- **Part 2**: 
+    - same as above, but added a `smudge` param. 
+    - instead of changing `.` to `#`. They are interchangeable. As long as there are 1 difference in smudge, we can reflect.
+    - In order to advance the reflection check, either `l` and `r` idx must be the same, or have 1 smudge difference.
+    - When the loop ends, check that we have advance till the end with only 1 smudge difference.
+
+After checking other solution, another neater way is compare the mirror as a whole. By slicing the mirror and reversing the `after`, a `zip(before, after)` should be the same list if it reflects.
+```python
+
+grid_before = grid[:r]
+grid_after = grid[r:][::1]
+
+for l, r in zip(grid_before, grid_after):
+    for a, b in zip(l, r):
+        # compare each row element a and b
+        ...
+```
