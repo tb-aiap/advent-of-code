@@ -115,3 +115,14 @@ for l, r in zip(grid_before, grid_after):
         # compare each row element a and b
         ...
 ```
+### Day 14: Parabolic Reflector Dish
+
+- **Part 1**: 
+    - Simulate a board tilt westward, using `loop` from left to right to count location of rocks.
+    - Not ideal but, For every north, east, south tilt, massage/rotate it to fit a `westward_tilt` position.
+
+- **Part 2**: 
+    - Create a cycle by running the board into 4 tiles.
+    - After 1 cycle, record the steps and board position in a hashmap. `first_seen`
+    - Find out, how many more cycles until the board is seen in the same position as above as `second_seen`
+    - Using this information, we can cut short 1 billion cycles by finding the remainder (after fast forwarding the same cycles.) 
