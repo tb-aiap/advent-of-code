@@ -126,3 +126,11 @@ for l, r in zip(grid_before, grid_after):
     - After 1 cycle, record the steps and board position in a hashmap. `first_seen`
     - Find out, how many more cycles until the board is seen in the same position as above as `second_seen`
     - Using this information, we can cut short 1 billion cycles by finding the remainder (after fast forwarding the same cycles.) 
+
+### Day 15: Lens Library
+
+- **Part 1**:
+    - Just follow the instructions
+
+- **Part 2**:
+    - Create simulate the instruction with a list of array as the boxes and loop through each boxes based on the lens type.
