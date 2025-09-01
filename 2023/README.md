@@ -134,3 +134,12 @@ for l, r in zip(grid_before, grid_after):
 
 - **Part 2**:
     - Create simulate the instruction with a list of array as the boxes and loop through each boxes based on the lens type.
+
+### Day 16: The Floor Will Be Lava
+
+
+- **Part 1**:
+    - Simulate the laser shooting path one block at a time. Because the laser is splitted upon hitting `|` or `-`, there will be 2 different paths. So handing one each laser path one step at a time via a stack.
+
+- **Part 2**:
+    - For the maximum pew, simulate shooting a laser from all four corners of the grid.
