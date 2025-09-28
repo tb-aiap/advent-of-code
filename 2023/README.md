@@ -143,3 +143,9 @@ for l, r in zip(grid_before, grid_after):
 
 - **Part 2**:
     - For the maximum pew, simulate shooting a laser from all four corners of the grid.
+
+### Day 17: Clumsy Crucible
+
+- **Part 1 and 2**:
+    - BFS to search through the lava map for all possible path to the destination.
+    - Setting the restriction of BFS search to a specific min and max steps. So that the next step is invalid if it does not meet the rule required. 
