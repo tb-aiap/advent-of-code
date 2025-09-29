@@ -149,3 +149,8 @@ for l, r in zip(grid_before, grid_after):
 - **Part 1 and 2**:
     - BFS to search through the lava map for all possible path to the destination.
     - Setting the restriction of BFS search to a specific min and max steps. So that the next step is invalid if it does not meet the rule required. 
+
+### Day 18: Lavaduct Lagoon
+
+- **Part 1 and 2**:
+    - Using similar formula from `Day 10` to find the area inside a polygon.
