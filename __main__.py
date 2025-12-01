@@ -28,7 +28,7 @@ def valid_year(year: int):
     import datetime
 
     year_now = datetime.datetime.now().year
-    return 2015 <= year < year_now
+    return 2015 <= year <= year_now
 
 
 @app.command()
