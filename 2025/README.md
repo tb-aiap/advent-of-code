@@ -17,8 +17,16 @@ Tricky turns of a safe vault.
 
 Be greedy
 
-- **Part 1:**: Brute force the 2 digits. 
+- **Part 1:** Brute force the 2 digits. 
 
-- **Part 2:**: Build the largest possible 12-digit number by choosing digits in order from the string (a greedy subsequence). 
+- **Part 2:** Build the largest possible 12-digit number by choosing digits in order from the string (a greedy subsequence). 
     - Always choose the highest possible digit (9 → 1) that still leaves enough characters to complete 12 digits. 
     - Repeat until the 12-digit sequence is formed, then sum across all lines.
+
+### Day 4 : Printing Department 
+
+Clear unstable asteroid blocks.
+
+- **Part 1:** Count all @ blocks that have fewer than 4 adjacent @ neighbors (8-directional). No removal — just count once.
+
+- **Part 2:** Repeatedly remove all @ blocks with <4 neighbors, update the grid, and continue until no more blocks can be removed. Count all removed blocks across all rounds.
