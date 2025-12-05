@@ -30,3 +30,14 @@ Clear unstable asteroid blocks.
 - **Part 1:** Count all @ blocks that have fewer than 4 adjacent @ neighbors (8-directional). No removal — just count once.
 
 - **Part 2:** Repeatedly remove all @ blocks with <4 neighbors, update the grid, and continue until no more blocks can be removed. Count all removed blocks across all rounds.
+
+### Day 5 : Cafeteria
+
+Fresh or expired ingredients — verify ranges and merge them smartly.
+
+- **Part 1:** Count how many ingredient numbers fall within any of the fresh-range intervals. Use a set to avoid double-counting ingredients that fall in multiple ranges.
+
+- **Part 2:** Merge all overlapping or touching fresh-ranges, then count the total number of distinct values covered.
+  - Sort intervals by their start.
+  - Merge intervals when they overlap ([a,b] with [c,d]) by replacing the last merged interval with (a, max(b,d)).
+  - This gives the total number of integers that are “fresh” across all combined ranges.
