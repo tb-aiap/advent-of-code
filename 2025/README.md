@@ -41,3 +41,15 @@ Fresh or expired ingredients — verify ranges and merge them smartly.
   - Sort intervals by their start.
   - Merge intervals when they overlap ([a,b] with [c,d]) by replacing the last merged interval with (a, max(b,d)).
   - This gives the total number of integers that are “fresh” across all combined ranges.
+
+### Day 6 : Trash Compactor
+
+Vertical arithmetic with mixed operators.
+
+- **Part 1:** Each column of numbers is a “question bank.” 
+  - For each column, apply the operator (+ or *) from the last row to all numbers in that column.
+  - Sum the results of all columns to get the final answer.
+
+Key trick: collect numbers by column first, then reduce using the operator.
+
+- **Part 2:** If the columns are padded properly, it is possble to `zip(*rows)` to read the lines vertically
