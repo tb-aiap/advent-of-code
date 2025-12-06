@@ -44,7 +44,7 @@ Fresh or expired ingredients — verify ranges and merge them smartly.
 
 ### Day 6 : Trash Compactor
 
-Vertical arithmetic with mixed operators.
+`utils.py` messed me up with `[r.strip() for r in file]`. :w
 
 - **Part 1:** Each column of numbers is a “question bank.” 
   - For each column, apply the operator (+ or *) from the last row to all numbers in that column.
