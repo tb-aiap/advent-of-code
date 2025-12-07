@@ -53,3 +53,13 @@ Fresh or expired ingredients — verify ranges and merge them smartly.
 Key trick: collect numbers by column first, then reduce using the operator.
 
 - **Part 2:** If the columns are padded properly, it is possble to `zip(*rows)` to read the lines vertically
+
+### Day 7 : Laboratories
+
+Almost went down recursion rabbit hold
+
+- **Part 1:** Track the beam’s position as it moves row by row.
+  - Each ^ splits any incoming beams into left and right, removing the original.  
+  - Count how many times a split occurs.
+
+- **Part 2:** Same simulation, but instead of counting splits, return the total number of beams that pass through that row. That count represent the number of ways the lifetime enters this row/col after multiple split above
