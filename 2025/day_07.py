@@ -20,7 +20,7 @@ def solve(data, part2=False):
                 curr_beam = beam_arr_index[splitter]
                 if splitter > 0:
                     beam_arr_index[splitter - 1] += curr_beam
-                if splitter < len(data[0]):
+                if splitter < len(data[0]) - 1:
                     beam_arr_index[splitter + 1] += curr_beam
 
                 beam_arr_index[splitter] = 0
