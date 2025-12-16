@@ -63,3 +63,14 @@ Almost went down recursion rabbit hold
   - Count how many times a split occurs.
 
 - **Part 2:** Same simulation, but instead of counting splits, return the total number of beams that pass through that row. That count represent the number of ways the lifetime enters this row/col after multiple split above
+
+### Day 8 : Circuit Assembly
+
+Finally had to stop brute forcing and learn something new.
+
+- **Part 1:** Model each circuit as a point in 3D space and compute the Euclidean distance between every pair globally and sort it. Gradually connect circuits using a Union-Find (Disjoint Set Union) structure. Stop after a fixed number of successful connections, then find the sizes of all connected components. Multiply the sizes of the three largest components.
+
+- **Part 2:** Continue the same merging process until all circuits are connected. Track the last successful connection made. Return the product of the x-coordinates of the two circuits in that final merge. 
+
+> Notes / Lessons learned: 
+- Used a lot of ChatGPT here — mainly to understand how Union-Find works and how Kruskal-style algorithms build connections incrementally.
